@@ -16,3 +16,7 @@ spring:
       connect-timeout: 3000
   profiles:
     active: secret
+
+springdoc:
+  swagger-ui:
+    path: /api-docs
