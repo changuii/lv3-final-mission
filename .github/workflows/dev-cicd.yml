@@ -1,6 +1,7 @@
 name: CI/CD to Dev Server
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - develop

@@ -1,6 +1,7 @@
 name: CI/CD to Prod Server
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
