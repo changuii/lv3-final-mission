@@ -3,9 +3,6 @@
 spring:
   datasource:
     url: jdbc:h2:mem:restaurant
-  h2:
-    console:
-      enabled: true
 
   jpa:
     defer-datasource-initialization: true
