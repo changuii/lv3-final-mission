@@ -35,7 +35,7 @@ jobs:
         run: |
           if lsof -i:$APP_PORT -t >/dev/null; then
             echo "Stopping application running on port $APP_PORT"
-            lsof -i:$APP_PORT -t | xargs kill -9
+            lsof -i:$APP_PORT -t | sudo xargs kill -9
           else
             echo "No application running on port $APP_PORT"
           fi
@@ -43,7 +43,7 @@ jobs:
       # 5. 새로운 애플리케이션 실행 및 상태 확인
       - name: Start application
         run: |
-          nohup java -jar build/libs/$JAR_NAME > app.log 2>&1 &
+          sudo nohup java -jar build/libs/$JAR_NAME > app.log 2>&1 &
           sleep 30
           if ! lsof -i:$APP_PORT -t >/dev/null; then
             echo "Application failed to start on port $APP_PORT"
