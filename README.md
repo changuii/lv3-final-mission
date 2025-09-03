@@ -40,3 +40,45 @@
 ### API 명세
 자세한 API 명세는 아래의 swagger 참고   
 [API 목록](https://boogie.p-e.kr/api-docs)
+
+### 아키텍처 그림
+```mermaid
+flowchart TD
+  subgraph GitHub
+    A[GitHub Repository] -->|Push main| B[GitHub Actions]
+    A -->|Push develop| B
+  end
+
+  subgraph Runner
+    B -->|Prod Build & Deploy| C[Prod EC2]
+    B -->|Dev Build & Deploy| D[Dev EC2]
+  end
+
+  subgraph Prod
+    C --> E[Nginx + HTTPS]
+    E --> F[Spring Boot App]
+  end
+
+  subgraph db
+    F --> G[Prod MySQL EC2]
+  end
+
+  subgraph Dev
+    D --> H[Spring Boot App]
+    H --> I[Dev MySQL EC2]
+  end
+
+
+
+```
+
+| 구성요소                         | 역할                                 |
+| ---------------------------- |------------------------------------|
+| **GitHub Repository**        | 소스 코드 관리, 브랜치별 변경사항 감지             |
+| **GitHub Actions**           | 브랜치별 CI/CD 파이프라인 실행, 빌드/배포 트리거     |
+| **Self-hosted Runner (EC2)** | GitHub Actions 워크플로우를 실행하는 실행 환경   |
+| **Prod EC2**                 | 프로덕션 환경 애플리케이션 실행, HTTPS 적용        |
+| **Dev EC2**                  | 개발 환경 애플리케이션 실행, 데이터베이스 실행, 테스트 목적 |
+| **Nginx + HTTPS (Prod)**     | HTTPS 요청 처리, Reverse Proxy 역할      |
+| **Prod MySQL EC2**           | 프로덕션 데이터베이스, 별도 EC2에서 운영           |
+
