@@ -35,7 +35,7 @@ jobs:
         run: |
           if lsof -i:$APP_PORT -t >/dev/null; then
             echo "Stopping application running on port $APP_PORT"
-            lsof -i:$APP_PORT -t | sudo xargs kill -9
+            sudo lsof -i:$APP_PORT -t | sudo xargs kill -9
           else
             echo "No application running on port $APP_PORT"
           fi
