@@ -1,0 +1,52 @@
+name: CI/CD to Prod Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, prod]
+    env:
+      JAR_NAME: lv2-final-mission-0.0.1-SNAPSHOT.jar
+      APP_PORT: 8080
+      RESOURCES_DIR: src/main/resources
+      SECRET_FILE: application-secret.yml
+
+    steps:
+      # 1. 프로젝트 체크아웃
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      # 2. PROD_SECRET_YML secret를 resources 디렉터리에 추가
+      - name: Add PROD_SECRET_YML
+        run: |
+          mkdir -p $RESOURCES_DIR
+          echo "${{ secrets.PROD_SECRET_YML }}" > $RESOURCES_DIR/$SECRET_FILE
+
+      # 3. Gradle 빌드
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      # 4. 기존 애플리케이션 종료
+      - name: Stop existing application
+        run: |
+          if lsof -i:$APP_PORT -t >/dev/null; then
+            echo "Stopping application running on port $APP_PORT"
+            lsof -i:$APP_PORT -t | xargs kill -9
+          else
+            echo "No application running on port $APP_PORT"
+          fi
+
+      # 5. 새로운 애플리케이션 실행 및 상태 확인
+      - name: Start application
+        run: |
+          nohup java -jar build/libs/$JAR_NAME > app.log 2>&1 &
+          sleep 30
+          if ! lsof -i:$APP_PORT -t >/dev/null; then
+            echo "Application failed to start on port $APP_PORT"
+            exit 1
+          else
+            echo "Application is running on port $APP_PORT"
+          fi
