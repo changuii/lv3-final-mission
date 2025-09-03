@@ -1,11 +1,15 @@
 package finalmission.member.api;
 
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.BDDMockito.*;
 
 import finalmission.fixture.ApiTestFixture;
+import finalmission.member.domain.NameGenerator;
 import finalmission.member.dto.AuthRequest;
+import finalmission.member.dto.NicknameResult;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -21,6 +26,15 @@ public class AuthApiTest {
 
     @LocalServerPort
     private int port;
+
+    @MockitoBean
+    private NameGenerator nameGenerator;
+
+    @BeforeEach
+    void setUp() {
+        NicknameResult mockNickname = new NicknameResult("MOCK", false);
+        given(nameGenerator.generateName()).willReturn(mockNickname);
+    }
 
     @Nested
     @DisplayName("로그인")

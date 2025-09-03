@@ -1,0 +1,28 @@
+
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:restaurant
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    defer-datasource-initialization: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  http:
+    client:
+      read-timeout: 3000
+      connect-timeout: 3000
+
+api:
+  random: 111111111111111111111
+
+auth:
+  token:
+    key: grgrgrgrgrgrgrgrepgokrgo
+    expiration: 3600_000

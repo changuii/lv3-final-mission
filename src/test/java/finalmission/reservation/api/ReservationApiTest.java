@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.BDDMockito.given;
 
 import finalmission.fixture.ApiTestFixture;
+import finalmission.member.domain.NameGenerator;
+import finalmission.member.dto.NicknameResult;
 import finalmission.reservation.domain.DateGenerator;
 import finalmission.reservation.dto.ReservationRequest;
 import io.restassured.RestAssured;
@@ -12,6 +14,7 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,6 +35,14 @@ public class ReservationApiTest {
     @LocalServerPort
     private int port;
 
+    @MockitoBean
+    private NameGenerator nameGenerator;
+
+    @BeforeEach
+    void setUp() {
+        NicknameResult mockNickname = new NicknameResult("MOCK", false);
+        given(nameGenerator.generateName()).willReturn(mockNickname);
+    }
 
     @Nested
     @DisplayName("예약 생성")

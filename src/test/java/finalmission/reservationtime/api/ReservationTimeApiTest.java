@@ -2,13 +2,17 @@ package finalmission.reservationtime.api;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.BDDMockito.given;
 
 import finalmission.fixture.ApiTestFixture;
+import finalmission.member.domain.NameGenerator;
+import finalmission.member.dto.NicknameResult;
 import finalmission.reservationtime.dto.ReservationTimeRequest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import java.time.LocalTime;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -25,6 +30,14 @@ public class ReservationTimeApiTest {
     @LocalServerPort
     private int port;
 
+    @MockitoBean
+    private NameGenerator nameGenerator;
+
+    @BeforeEach
+    void setUp() {
+        NicknameResult mockNickname = new NicknameResult("MOCK", false);
+        given(nameGenerator.generateName()).willReturn(mockNickname);
+    }
 
     @Nested
     @DisplayName("예약 시간 생성")
